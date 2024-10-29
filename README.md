@@ -46,3 +46,6 @@ Open a browser and go to http://127.0.0.1:5000/
 2. **Select Transformation**: Choose a transformation from the "Image Enhancement" dropdown.
 3. **Submit**: Click "Submit" to apply the transformation.
 4. **View Results**: The original and enhanced images appear side-by-side with visual effects.
+
+### Demo
+![Demo](./demo.gif)
