@@ -1,12 +1,4 @@
-
-
 /* Please ❤ this if you like it! */
-
-
-
-/* Please ❤ this if you like it! */
-
-
 (function($) { "use strict";
 	
 	//Page cursors

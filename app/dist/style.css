@@ -324,29 +324,6 @@ a .uil {
   background-color: #102770;
 }
 
-/* .section-dropdown-sub {
-  position: relative;
-  display: block;
-  width: 100%;
-  pointer-events: none;
-  opacity: 0;
-  max-height: 0;
-  padding-left: 10px;
-  padding-right: 3px;
-  overflow: hidden;
-  transition: all 200ms linear;
-}
-.dropdown-sub:checked ~ .section-dropdown-sub{
-  pointer-events: auto;
-  opacity: 1;
-  max-height: 999px;
-} */
-/* .section-dropdown-sub a {
-  font-size: 14px;
-}
-.section-dropdown-sub a .uil {
-  font-size: 20px;
-} */
 .logo {
 	position: fixed;
 	top: 50px;
@@ -978,4 +955,23 @@ body.light .cursor2.hover {
   object-fit: contain;
   /* Ensures the image fits within its box */
   display: block;
+}
+
+/* Hide sub-options by default */
+.section-dropdown-sub {
+  display: none;
+  opacity: 0;
+  max-height: 0;
+  pointer-events: none;
+  transform: translateY(20px);
+  transition: all 200ms linear;
+}
+
+/* Show sub-options when checkbox is checked */
+.dropdown-sub:checked+label+.section-dropdown-sub {
+  display: block;
+  opacity: 1;
+  max-height: 999px;
+  pointer-events: auto;
+  transform: translateY(0);
 }

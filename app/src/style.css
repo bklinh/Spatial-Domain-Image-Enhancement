@@ -5,6 +5,14 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap');
 
+.logo-container {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 9999;
+  /* Ensure it is above other elements */
+}
+
 *,
 *::before,
 *::after {
@@ -32,6 +40,8 @@ body{
   padding-top: 100px;
   padding-bottom: 300px;
 }
+
+
 .sec-center {
   position: relative;
   max-width: 100%;
@@ -669,6 +679,7 @@ mark {
   background: rgba(255, 255, 255, 1);
   box-shadow: 0 0 0 rgba(255, 255, 255, 0.2);
 }
+
 
 .link-to-page {
   position: fixed;

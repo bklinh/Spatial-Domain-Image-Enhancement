@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Image Enhancement</title>
     <link
       rel="stylesheet"
@@ -26,19 +27,12 @@
   <body>
     <!-- Logo Container -->
     <div class="logo-container">
-      <a href="/home">
+      <a href="/">
         <img
           src="{{ url_for('static', filename='image.png') }}"
           alt="App Logo" />
       </a>
     </div>
-
-    <!-- partial:index.partial.html -->
-    <input
-      class="dark-light"
-      type="checkbox"
-      id="dark-light"
-      name="dark-light" />
 
     <div class="sec-center">
       <input
@@ -50,7 +44,7 @@
       <button type="button" id="capture-button">Capture from Camera</button>
       <input class="dropdown" type="checkbox" id="dropdown" name="dropdown" />
       <label class="for-dropdown" for="dropdown" id="image-enhancement-label">
-        Image Enhancement <i class="uil uil-arrow-down"></i>
+        Features <i class="uil uil-arrow-down"></i>
       </label>
       <button type="submit" id="submit-button">Submit</button>
 
@@ -81,76 +75,52 @@
       <p id="instructions" style="margin-top: 20px; color: #aaa">
         Please upload an image and select a transformation to get started.
       </p>
-      <!-- </div> -->
 
+      <!-- Transformation Options -->
       <div class="section-dropdown">
-        <!-- Point Processing Section -->
-        <input type="checkbox" id="dropdown-sub-point" class="dropdown-sub" />
-        <label class="for-dropdown-sub" for="dropdown-sub-point">
-          Point Processing <i class="uil uil-plus"></i>
-        </label>
-        <div class="section-dropdown-sub-point">
-          <!-- Gray-level Transform with sub-dropdown -->
-          <input type="checkbox" id="dropdown-sub-gray" class="dropdown-sub" />
-          <label class="for-dropdown-sub" for="dropdown-sub-gray">
-            Gray-level Transform <i class="uil uil-plus"></i>
-          </label>
-          <div class="section-dropdown-sub-gray">
-            <a href="#" onclick="selectTransformation(this)"
-              >Linear <i class="uil uil-arrow-right"></i
-            ></a>
-            <a href="#" onclick="selectTransformation(this)"
-              >Logarithmic <i class="uil uil-arrow-right"></i
-            ></a>
-            <a href="#" onclick="selectTransformation(this)"
-              >Power Law <i class="uil uil-arrow-right"></i
-            ></a>
-          </div>
-
-          <a href="#" onclick="selectTransformation(this)"
-            >Thresholding <i class="uil uil-arrow-right"></i
-          ></a>
-          <a href="#" onclick="selectTransformation(this)"
-            >Gray-level Slicing <i class="uil uil-arrow-right"></i
-          ></a>
-          <a href="#" onclick="selectTransformation(this)"
-            >Bit Plane Slicing <i class="uil uil-arrow-right"></i
-          ></a>
-        </div>
-
-        <!-- Histogram Manipulation Section -->
+        <!-- Frequency Domain Filters Section -->
         <input
           type="checkbox"
-          id="dropdown-sub-histogram"
+          id="dropdown-sub-frequency"
           class="dropdown-sub" />
-        <label class="for-dropdown-sub" for="dropdown-sub-histogram">
-          Histogram Manipulation <i class="uil uil-plus"></i>
+        <label class="for-dropdown-sub" for="dropdown-sub-frequency">
+          Frequency Domain Filters <i class="uil uil-plus"></i>
         </label>
-        <div class="section-dropdown-sub-histogram">
-          <a href="#" onclick="selectTransformation(this)"
-            >Histogram Equalization <i class="uil uil-arrow-right"></i
-          ></a>
-          <a href="#" onclick="selectTransformation(this)"
-            >Histogram Matching <i class="uil uil-arrow-right"></i
-          ></a>
+        <div class="section-dropdown-sub">
+          <a href="#" onclick="selectTransformation(this, 'Low-pass Filter')">
+            Low-pass Filter <i class="uil uil-arrow-right"></i>
+          </a>
+          <a href="#" onclick="selectTransformation(this, 'High-pass Filter')">
+            High-pass Filter <i class="uil uil-arrow-right"></i>
+          </a>
         </div>
 
-        <!-- Spatial Filtering Section -->
-        <input type="checkbox" id="dropdown-sub-spatial" class="dropdown-sub" />
-        <label class="for-dropdown-sub" for="dropdown-sub-spatial">
-          Spatial Filtering <i class="uil uil-plus"></i>
+        <!-- Morphological Operation Section -->
+        <input
+          type="checkbox"
+          id="dropdown-sub-morphological"
+          class="dropdown-sub" />
+        <label class="for-dropdown-sub" for="dropdown-sub-morphological">
+          Morphological Operation <i class="uil uil-plus"></i>
         </label>
-        <div class="section-dropdown-sub-spatial">
-          <a href="#" onclick="selectTransformation(this)"
-            >Smoothing <i class="uil uil-arrow-right"></i
-          ></a>
-          <a href="#" onclick="selectTransformation(this)"
-            >Sharpening <i class="uil uil-arrow-right"></i
-          ></a>
-          <a href="#" onclick="selectTransformation(this)"
-            >Edge Detection <i class="uil uil-arrow-right"></i
-          ></a>
+        <div class="section-dropdown-sub">
+          <a href="#" onclick="selectTransformation(this, 'Dilation')">
+            Dilation <i class="uil uil-arrow-right"></i>
+          </a>
+          <a href="#" onclick="selectTransformation(this, 'Erosion')">
+            Erosion <i class="uil uil-arrow-right"></i>
+          </a>
         </div>
+
+        <!-- DCT Compression Section -->
+        <a href="#" onclick="selectTransformation(this, 'DCT Compression')">
+          DCT Compression <i class="uil uil-arrow-right"></i>
+        </a>
+
+        <!-- Object Recognition Section -->
+        <a href="#" onclick="selectTransformation(this, 'Object Recognition')">
+          Object Recognition <i class="uil uil-arrow-right"></i>
+        </a>
       </div>
     </div>
 
@@ -183,18 +153,23 @@
             <div class="col-12 col-sm-5 col-md-5 col-xl-4 align-self-center">
               <div class="img-wrap">
                 <img
-                  src="{{ url_for('static', filename='1.png')}}"
-                  alt="Point Processing" />
+                  src="{{ url_for('static', filename='4.png')}}"
+                  alt="Image Processing" />
               </div>
             </div>
             <div
               class="col-12 col-sm-7 col-md-7 col-lg-5 col-xl-4 pl-4 align-self-center mt-4 mt-sm-0 text-center text-sm-left">
-              <h3 class="mb-1">Point Processing</h3>
-              <p class="small mb-2 opacity-60">Image Enhancement Techniques</p>
+              <h3 class="mb-1">✨cherrimage📷 ₊♡₊˚ 🍒🍒🍒・₊✧</h3>
+              <p class="small mb-2 opacity-60">
+                Enhance the Ability of Your Images
+              </p>
               <p class="mt-4 pt-2 mb-0 d-none d-sm-block">
-                Point Processing involves direct pixel manipulation, allowing
-                changes in intensity values to achieve brightness adjustment,
-                contrast enhancement, and more.
+                Image Processing encompasses a wide range of techniques for
+                improving image quality, extracting meaningful information, and
+                enhancing visual appearance. Our website offers services
+                including point processing, filtering, compression, and
+                morphological operations to transform and analyze images
+                effectively.
               </p>
             </div>
           </div>

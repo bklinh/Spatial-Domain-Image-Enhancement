@@ -67,6 +67,7 @@
         $('.slide-buttons li:nth-child(1)').trigger('mouseenter');
     });
 
+
     // Function to handle selection of transformation
     function selectTransformation(element) {
         console.log("Transformation selected:", element.textContent.trim()); // Debugging line
@@ -85,7 +86,6 @@
     }
     window.selectTransformation = selectTransformation;
 
-    // Image upload and submission functionality
     // Image upload and submission functionality
 document.getElementById("submit-button").addEventListener("click", async function() {
     const fileInput = document.getElementById("file-upload");

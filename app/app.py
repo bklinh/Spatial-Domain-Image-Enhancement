@@ -2,6 +2,11 @@ from flask import Flask, request, send_file, render_template, jsonify
 from PIL import Image, ImageEnhance, ImageOps, ImageFilter
 from io import BytesIO
 import numpy as np
+import cv2
+from skimage.filters import threshold_otsu
+from skimage.morphology import dilation, erosion, square
+from scipy.fftpack import fft2, ifft2, fftshift, ifftshift
+from sklearn.decomposition import PCA
 
 app = Flask(__name__, static_folder="dist", template_folder="dist")
 
@@ -37,32 +42,67 @@ def bit_plane_slicing(image, plane=4):
     bit_plane_img = bit_plane * 255
     return Image.fromarray(bit_plane_img.astype(np.uint8))
 
-def histogram_equalization(image):
+def dft_filtering(image, filter_type='lowpass', cutoff=30):
     img_array = np.array(image.convert('L'))
-    histogram, bins = np.histogram(img_array.flatten(), bins=256, range=[0, 256])
-    cdf = histogram.cumsum()
-    cdf_normalized = 255 * cdf / cdf[-1]
-    img_equalized = np.interp(img_array.flatten(), bins[:-1], cdf_normalized)
-    return Image.fromarray(img_equalized.reshape(img_array.shape).astype(np.uint8))
+    dft = fftshift(fft2(img_array))
+    rows, cols = img_array.shape
+    crow, ccol = rows // 2, cols // 2
 
-def histogram_matching(image):
-    # Placeholder: here, using histogram equalization for demonstration
-    return histogram_equalization(image)
+    mask = np.zeros_like(img_array)
+    if filter_type == 'lowpass':
+        mask[crow-cutoff:crow+cutoff, ccol-cutoff:ccol+cutoff] = 1
+    elif filter_type == 'highpass':
+        mask[:, :] = 1
+        mask[crow-cutoff:crow+cutoff, ccol-cutoff:ccol+cutoff] = 0
 
-def smoothing(image):
-    return image.filter(ImageFilter.SMOOTH)
+    dft_filtered = dft * mask
+    img_back = np.abs(ifft2(ifftshift(dft_filtered)))
+    return Image.fromarray(np.clip(img_back, 0, 255).astype(np.uint8))
 
-def sharpening(image):
-    return image.filter(ImageFilter.SHARPEN)
+def pca_object_recognition(image, num_components=10):
+    img_array = np.array(image.convert('L')).reshape(-1, 1)
+    pca = PCA(n_components=num_components)
+    transformed = pca.fit_transform(img_array)
+    reconstructed = pca.inverse_transform(transformed).reshape(image.size[::-1])
+    return Image.fromarray(np.clip(reconstructed, 0, 255).astype(np.uint8))
 
-def edge_detection(image):
-    return image.filter(ImageFilter.FIND_EDGES)
+def image_restoration(image, kernel_size=3):
+    img_array = np.array(image.convert('L'))
+    restored_img = cv2.medianBlur(img_array, kernel_size)
+    return Image.fromarray(restored_img)
+
+def morphological_operation(image, operation='dilation', kernel_size=3):
+    img_array = np.array(image.convert('L'))
+    kernel = square(kernel_size)
+    if operation == 'dilation':
+        processed_img = dilation(img_array, kernel)
+    elif operation == 'erosion':
+        processed_img = erosion(img_array, kernel)
+    return Image.fromarray((processed_img * 255).astype(np.uint8))
+
+def otsu_thresholding(image):
+    img_array = np.array(image.convert('L'))
+    threshold = threshold_otsu(img_array)
+    binary_img = img_array > threshold
+    return Image.fromarray((binary_img * 255).astype(np.uint8))
+
+def dct_image_compression(image, quality=50):
+    img_array = np.array(image)
+    encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), quality]
+    _, encimg = cv2.imencode('.jpg', img_array, encode_param)
+    decimg = cv2.imdecode(encimg, 1)
+    return Image.fromarray(decimg)
 
 # Routes
 
 @app.route("/")
 def index():
     return render_template("index.html")
+
+@app.route('/home')
+def home():
+    return render_template('home.html')
+
 
 @app.route("/process-image", methods=["POST"])
 def process_image():
@@ -71,9 +111,6 @@ def process_image():
 
     file = request.files['file']
     transformation = request.form['transformation']
-    
-    print(f"Received transformation: {transformation}")
-    print(f"Received file: {file.filename}")
 
     try:
         # Open the uploaded image
@@ -102,6 +139,22 @@ def process_image():
             img = sharpening(img)
         elif transformation == "Edge Detection":
             img = edge_detection(img)
+        elif transformation == "Low-pass Filter":
+            img = dft_filtering(img, filter_type='lowpass')
+        elif transformation == "High-pass Filter":
+            img = dft_filtering(img, filter_type='highpass')
+        elif transformation == "PCA Object Recognition":
+            img = pca_object_recognition(img)
+        elif transformation == "Image Restoration":
+            img = image_restoration(img)
+        elif transformation == "Dilation":
+            img = morphological_operation(img, operation='dilation')
+        elif transformation == "Erosion":
+            img = morphological_operation(img, operation='erosion')
+        elif transformation == "Otsu Thresholding":
+            img = otsu_thresholding(img)
+        elif transformation == "DCT Compression":
+            img = dct_image_compression(img)
         else:
             return jsonify({"error": f"Transformation '{transformation}' not recognized"}), 400
 
