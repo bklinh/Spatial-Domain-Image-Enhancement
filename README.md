@@ -1,4 +1,4 @@
-# Spatial-Domain-Image-Enhancement
+# cherrimage - Image Processing Web Application
 This repository contains a web-based application for enhancing images with various techniques. The core functionality includes image enhancement methods, which are accessible through an intuitive GUI built with Flask. This application allows users to apply transformations to images, making it easier to explore image enhancement techniques.
 
 This project is part of the "**CSE3062: Computer Vision**" course.
