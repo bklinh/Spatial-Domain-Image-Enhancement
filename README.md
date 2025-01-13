@@ -69,4 +69,8 @@ Open a browser and go to http://127.0.0.1:5000/
 4. **View Results**: The original and enhanced images appear side-by-side with visual effects.
 
 ### Demo
-![Demo](./demo.gif)
+![Demo](.
+
+Uploading Untitled video - Made with Clipchamp (3).mp4…
+
+/demo.gif)
